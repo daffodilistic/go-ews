@@ -7,8 +7,8 @@ import "encoding/xml"
 type ToRecipients struct {
 	XMLName xml.Name
 
-	// The Mailbox element identifies a mail-enabled Active Directory object.
-	Mailbox *Mailbox `xml:"Mailbox"`
+	// The Mailbox elements identify mail-enabled Active Directory objects.
+	Mailbox []*Mailbox `xml:"Mailbox"`
 }
 
 func (T *ToRecipients) SetForMarshal() {
