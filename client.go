@@ -107,14 +107,15 @@ func (c *client) SendAndReceive(e Envelope) ([]byte, error) {
 }
 
 func applyConfig(config *Config, client *http.Client) {
-	client.Transport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: config.SkipTLS}
+	transport := &http.Transport{
+		TLSNextProto:    map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: config.SkipTLS},
+	}
+	client.Transport = transport
 
 	if config.NTLM {
 		client.Transport = ntlmssp.Negotiator{
-			RoundTripper: &http.Transport{
-				TLSNextProto:    map[string]func(authority string, c *tls.Conn) http.RoundTripper{},
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: config.SkipTLS},
-			},
+			RoundTripper: transport,
 		}
 	}
 }
