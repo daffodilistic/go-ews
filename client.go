@@ -107,6 +107,8 @@ func (c *client) SendAndReceive(e Envelope) ([]byte, error) {
 }
 
 func applyConfig(config *Config, client *http.Client) {
+	client.Transport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: config.SkipTLS}
+
 	if config.NTLM {
 		client.Transport = ntlmssp.Negotiator{
 			RoundTripper: &http.Transport{
@@ -114,10 +116,6 @@ func applyConfig(config *Config, client *http.Client) {
 				TLSClientConfig: &tls.Config{InsecureSkipVerify: config.SkipTLS},
 			},
 		}
-	}
-
-	if config.SkipTLS {
-		client.Transport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 }
 
